@@ -177,11 +177,13 @@
   <ItemGroup>
     <ClInclude Include="detour.h" />
     <ClInclude Include="framework.h" />
+    <ClInclude Include="path.h" />
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="detour.cpp" />
+    <ClCompile Include="path.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
