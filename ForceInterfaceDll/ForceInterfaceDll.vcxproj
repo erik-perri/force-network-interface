@@ -194,4 +194,19 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
+  <Target Name="Build32" AfterTargets="Build">
+    <MSBuild Condition="'$(Platform)'=='x64'" Projects="$(MSBuildProjectFile)" Properties="Platform=Win32;PlatFormTarget=x86" RunEachTargetSeparately="true" />
+  </Target>
+  <Target Name="CopyTo64" AfterTargets="Build32">
+    <ItemGroup>
+      <FilesToCopy Include="$(OutDir)\*.x86.*"/>
+    </ItemGroup>
+    <Copy Condition="'$(Platform)'=='Win32'" SourceFiles="@(FilesToCopy)" DestinationFolder="$(OutDir)\..\x64" />
+  </Target>
+  <Target Name="AfterClean">
+    <ItemGroup>
+      <FilesToDelete Include="$(OutDir)\*.x86.*"/>
+    </ItemGroup>
+    <Delete Condition="'$(Platform)'=='x64'" ContinueOnError="true" Files="@(FilesToDelete)" />
+  </Target>
 </Project>
