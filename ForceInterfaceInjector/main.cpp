@@ -1,6 +1,5 @@
 #include "pch.h"
 #include "framework.h"
-#include "debug.h"
 #include "process.h"
 
 String GetDllPath()

@@ -1,6 +1,6 @@
 #include "pch.h"
-#include <stdio.h>
-#include <stdarg.h>
+#include "framework.h"
+#include "debug-helpers.h"
 
 int __cdecl OutputDebugLineA(LPCSTR format, ...)
 {

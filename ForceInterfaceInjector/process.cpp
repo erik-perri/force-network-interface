@@ -1,13 +1,8 @@
 #include "pch.h"
 #include "framework.h"
 #include "process.h"
-#include "debug.h"
 
 #include <algorithm>
-#include <strsafe.h>
-#include <detours.h>
-
-#pragma comment(lib, "detours.lib")
 
 BOOL IsFile(String strPath)
 {
