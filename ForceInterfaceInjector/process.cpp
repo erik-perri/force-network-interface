@@ -35,15 +35,8 @@ CreateResult CreateProcessWithDll(String strExecutablePath, String strCommandLin
 		return INVALID_DLL;
 	}
 
-	DWORD nDlls = 1;
 	DWORD dwDllLength = (DWORD)strDllPath.size() + 1;
-	LPCSTR rpszDllsOut[1];
-
-	for (DWORD n = 0; n < ARRAYSIZE(rpszDllsOut); n++) {
-		rpszDllsOut[n] = NULL;
-	}
-
-	CHAR* pszDllCopy = new CHAR[dwDllLength];
+	CHAR* pszDllPath = new CHAR[dwDllLength];
 
 #ifdef _UNICODE
 	const int nSizeNeeded = WideCharToMultiByte(CP_UTF8, 0, &strDllPath[0], (int)strDllPath.size(), NULL, 0, NULL, NULL);
@@ -51,12 +44,10 @@ CreateResult CreateProcessWithDll(String strExecutablePath, String strCommandLin
 	std::string strConverted(nSizeNeeded, 0);
 	WideCharToMultiByte(CP_UTF8, 0, &strDllPath[0], (int)strDllPath.size(), &strConverted[0], nSizeNeeded, NULL, NULL);
 
-	StringCchCopyA(pszDllCopy, dwDllLength, strConverted.c_str());
+	StringCchCopyA(pszDllPath, dwDllLength, strConverted.c_str());
 #else
-	StringCchCopyA(pszDllCopy, dwDllLength, strDllPath.c_str());
+	StringCchCopyA(pszDllPath, dwDllLength, strDllPath.c_str());
 #endif
-
-	rpszDllsOut[0] = pszDllCopy;
 
 	DWORD dwCommandLineLength = (DWORD)strCommandLine.size() + 1;
 	TCHAR* pszCommandLine = NULL;
@@ -75,14 +66,10 @@ CreateResult CreateProcessWithDll(String strExecutablePath, String strCommandLin
 
 	SetLastError(0);
 
-	BOOL bCreateResult = DetourCreateProcessWithDlls(strExecutablePath.c_str(), pszCommandLine, NULL, NULL, TRUE, dwFlags, NULL, NULL, &si, &pi, nDlls, rpszDllsOut, NULL);
+	BOOL bCreateResult = DetourCreateProcessWithDllEx(strExecutablePath.c_str(), pszCommandLine, NULL, NULL, TRUE, dwFlags, NULL, NULL, &si, &pi, pszDllPath, NULL);
 
-	for (DWORD n = 0; n < nDlls; n++) {
-		if (rpszDllsOut[n] != NULL) {
-			delete[] rpszDllsOut[n];
-			rpszDllsOut[n] = NULL;
-		}
-	}
+	delete[] pszDllPath;
+	pszDllPath = NULL;
 
 	if (strCommandLine.size() > 0) {
 		delete[] pszCommandLine;
