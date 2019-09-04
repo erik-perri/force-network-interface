@@ -9,3 +9,10 @@
 #include <malloc.h>
 #include <memory.h>
 #include <tchar.h>
+#include <string>
+
+#ifdef _UNICODE
+#define String std::wstring
+#else
+#define String std::string
+#endif // !UNICODE
