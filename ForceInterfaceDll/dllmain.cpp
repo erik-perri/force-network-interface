@@ -16,8 +16,7 @@ Options GetGlobalOptions()
 
 BOOL APIENTRY DllMain(HMODULE hModule, DWORD  dwReasonForCall, LPVOID lpReserved)
 {
-	switch (dwReasonForCall)
-	{
+	switch (dwReasonForCall) {
 	case DLL_PROCESS_ATTACH:
 		if (!g_forceOptions.LoadInterfaceIpFromEnv(_T("FORCE_INTERFACE"))) {
 			OutputDebugLine(_T("ForceInterfaceDll: Not attaching to %d"), GetCurrentProcessId());

@@ -61,7 +61,9 @@ CreateResult CreateProcessWithDll(String strExecutablePath, String strCommandLin
 
 	SetLastError(0);
 
-	BOOL bCreateResult = DetourCreateProcessWithDllEx(strExecutablePath.c_str(), pszCommandLine, NULL, NULL, TRUE, dwFlags, NULL, NULL, &si, &pi, pszDllPath, NULL);
+	BOOL bCreateResult = DetourCreateProcessWithDllEx(
+		strExecutablePath.c_str(), pszCommandLine, NULL, NULL, TRUE, dwFlags, NULL, NULL, &si, &pi, pszDllPath, NULL
+	);
 
 	delete[] pszDllPath;
 	pszDllPath = NULL;
