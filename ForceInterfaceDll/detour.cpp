@@ -1,5 +1,6 @@
 #include "pch.h"
 
+BOOL g_bAttached = FALSE;
 LPCSTR g_pDllPath = NULL;
 
 int (WINAPI* Real_send)(SOCKET s, CONST char* buf, int len, int flags) = send;
@@ -61,10 +62,16 @@ void AttachDetours(LPCSTR lpDllPath)
 	DetourAttach(&(PVOID&)Real_CreateProcessW, Hooked_CreateProcessW);
 
 	DetourTransactionCommit();
+
+	g_bAttached = TRUE;
 }
 
 void DetachDetours()
 {
+	if (g_bAttached == FALSE) {
+		return;
+	}
+
 	g_pDllPath = NULL;
 
 	DetourTransactionBegin();
