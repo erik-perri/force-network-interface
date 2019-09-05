@@ -2,6 +2,7 @@
 
 BOOL g_bAttached = FALSE;
 LPCSTR g_pDllPath = NULL;
+in_addr g_addrSocketAddr;
 
 int (WINAPI* Real_send)(SOCKET s, CONST char* buf, int len, int flags) = send;
 
@@ -48,9 +49,15 @@ BOOL WINAPI Hooked_CreateProcessW(LPCWSTR lpApplicationName, LPWSTR lpCommandLin
 	return Real_CreateProcessW(lpApplicationName, lpCommandLine, lpProcessAttributes, lpThreadAttributes, bInheritHandles, dwCreationFlags, lpEnvironment, lpCurrentDirectory, lpStartupInfo, lpProcessInformation);
 }
 
-void AttachDetours(LPCSTR lpDllPath)
+void AttachDetours(LPCSTR lpDllPath, LPCTSTR lpIpAddress)
 {
 	g_pDllPath = lpDllPath;
+	g_addrSocketAddr = {};
+
+	if (InetPton(AF_INET, lpIpAddress, &g_addrSocketAddr) < 1) {
+		g_addrSocketAddr = {};
+		return;
+	}
 
 	DetourRestoreAfterWith();
 
@@ -73,6 +80,7 @@ void DetachDetours()
 	}
 
 	g_pDllPath = NULL;
+	g_addrSocketAddr = {};
 
 	DetourTransactionBegin();
 	DetourUpdateThread(GetCurrentThread());

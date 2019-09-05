@@ -4,6 +4,7 @@
 // Windows Header Files
 #include <windows.h>
 #include <winsock2.h>
+#include <ws2tcpip.h>
 
 // String Header Files
 #include <tchar.h>
