@@ -1,10 +1,17 @@
 #include "pch.h"
+#include "options.h"
 #include "detour.h"
-#include "path.h"
 
 // Detours requires an export in the DLL to inject properly
 void __declspec(dllexport) Unused()
 {
+}
+
+Options g_forceOptions;
+
+Options GetGlobalOptions()
+{
+	return g_forceOptions;
 }
 
 BOOL APIENTRY DllMain(HMODULE hModule, DWORD  dwReasonForCall, LPVOID lpReserved)
@@ -15,23 +22,16 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD  dwReasonForCall, LPVOID lpReserved
 	switch (dwReasonForCall)
 	{
 	case DLL_PROCESS_ATTACH:
-		OutputDebugStringW(L"ForceInterfaceDll: DLL_PROCESS_ATTACH");
+		g_forceOptions.LoadDllPath(hModule);
 
-		ClearDllPath();
+		OutputDebugLine(_T("ForceInterfaceDll: ProcessAttach() %d %s"), GetCurrentProcessId(), g_forceOptions.GetDllPath());
 
-		if (GetModuleHandleEx(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS | GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT, (LPCTSTR)& Unused, &hDllModule) != 0
-			&& GetModuleFileNameA(hDllModule, szDllPath, sizeof(szDllPath)) != 0)
-		{
-			SetDllPath(szDllPath);
-		}
-
-		AttachDetours();
+		AttachDetours(g_forceOptions.GetDllPath());
 		break;
 	case DLL_PROCESS_DETACH:
-		OutputDebugStringW(L"ForceInterfaceDll: DLL_PROCESS_DETACH");
+		OutputDebugLine(_T("ForceInterfaceDll: ProcessDetach() %d"), GetCurrentProcessId());
 
 		DetachDetours();
-		ClearDllPath();
 		break;
 	}
 	return TRUE;

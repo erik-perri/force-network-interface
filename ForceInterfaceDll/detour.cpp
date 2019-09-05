@@ -1,11 +1,12 @@
 #include "pch.h"
-#include "path.h"
 
 #include <WinSock2.h>
 #include <detours.h>
 
 #pragma comment(lib, "ws2_32.lib")
 #pragma comment(lib, "detours.lib")
+
+LPCSTR g_pDllPath = NULL;
 
 int (WINAPI* Real_send)(SOCKET s, CONST char* buf, int len, int flags) = send;
 
@@ -24,12 +25,10 @@ BOOL(WINAPI* Real_CreateProcessA)(LPCSTR lpApplicationName, LPSTR lpCommandLine,
 
 BOOL WINAPI Hooked_CreateProcessA(LPCSTR lpApplicationName, LPSTR lpCommandLine, LPSECURITY_ATTRIBUTES lpProcessAttributes, LPSECURITY_ATTRIBUTES lpThreadAttributes, BOOL bInheritHandles, DWORD dwCreationFlags, LPVOID lpEnvironment, LPCSTR lpCurrentDirectory, LPSTARTUPINFOA lpStartupInfo, LPPROCESS_INFORMATION lpProcessInformation)
 {
-	LPCSTR lpDllPath = GetDllPath();
-	if (lpDllPath != NULL)
-	{
+	if (g_pDllPath != NULL) {
 		return DetourCreateProcessWithDllExA(
 			lpApplicationName, lpCommandLine, lpProcessAttributes, lpThreadAttributes, bInheritHandles, dwCreationFlags, lpEnvironment, lpCurrentDirectory, lpStartupInfo, lpProcessInformation,
-			lpDllPath, Real_CreateProcessA
+			g_pDllPath, Real_CreateProcessA
 		);
 	}
 
@@ -44,20 +43,20 @@ BOOL(WINAPI* Real_CreateProcessW)(LPCWSTR lpApplicationName, LPWSTR lpCommandLin
 
 BOOL WINAPI Hooked_CreateProcessW(LPCWSTR lpApplicationName, LPWSTR lpCommandLine, LPSECURITY_ATTRIBUTES lpProcessAttributes, LPSECURITY_ATTRIBUTES lpThreadAttributes, BOOL bInheritHandles, DWORD dwCreationFlags, LPVOID lpEnvironment, LPCWSTR lpCurrentDirectory, LPSTARTUPINFOW lpStartupInfo, LPPROCESS_INFORMATION lpProcessInformation)
 {
-	LPCSTR lpDllPath = GetDllPath();
-	if (lpDllPath != NULL)
-	{
+	if (g_pDllPath != NULL) {
 		return DetourCreateProcessWithDllExW(
 			lpApplicationName, lpCommandLine, lpProcessAttributes, lpThreadAttributes, bInheritHandles, dwCreationFlags, lpEnvironment, lpCurrentDirectory, lpStartupInfo, lpProcessInformation,
-			lpDllPath, Real_CreateProcessW
+			g_pDllPath, Real_CreateProcessW
 		);
 	}
 
 	return Real_CreateProcessW(lpApplicationName, lpCommandLine, lpProcessAttributes, lpThreadAttributes, bInheritHandles, dwCreationFlags, lpEnvironment, lpCurrentDirectory, lpStartupInfo, lpProcessInformation);
 }
 
-void AttachDetours()
+void AttachDetours(LPCSTR lpDllPath)
 {
+	g_pDllPath = lpDllPath;
+
 	DetourRestoreAfterWith();
 
 	DetourTransactionBegin();
@@ -72,6 +71,8 @@ void AttachDetours()
 
 void DetachDetours()
 {
+	g_pDllPath = NULL;
+
 	DetourTransactionBegin();
 	DetourUpdateThread(GetCurrentThread());
 
