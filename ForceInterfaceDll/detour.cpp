@@ -1,11 +1,5 @@
 #include "pch.h"
 
-#include <WinSock2.h>
-#include <detours.h>
-
-#pragma comment(lib, "ws2_32.lib")
-#pragma comment(lib, "detours.lib")
-
 LPCSTR g_pDllPath = NULL;
 
 int (WINAPI* Real_send)(SOCKET s, CONST char* buf, int len, int flags) = send;
