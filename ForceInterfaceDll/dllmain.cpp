@@ -9,11 +9,6 @@ void __declspec(dllexport) Unused()
 
 Options g_forceOptions;
 
-Options GetGlobalOptions()
-{
-	return g_forceOptions;
-}
-
 BOOL APIENTRY DllMain(HMODULE hModule, DWORD  dwReasonForCall, LPVOID lpReserved)
 {
 	switch (dwReasonForCall) {

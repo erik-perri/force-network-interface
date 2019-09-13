@@ -12,5 +12,3 @@ public:
 	BOOL LoadDllPath(HMODULE hDllModule);
 	BOOL LoadInterfaceIpFromEnv(LPCTSTR lpEnvKey);
 };
-
-Options GetGlobalOptions();
