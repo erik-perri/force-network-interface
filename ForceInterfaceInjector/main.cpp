@@ -29,7 +29,7 @@ int APIENTRY wWinMain(
     UNREFERENCED_PARAMETER(nShowCmd);
 
     if (__argc < 2) {
-        OutputDebugLineW(L"ForceInterfaceInjector: No app specified");
+        OutputDebugLineW(L"No app specified");
         return 3;
     }
 
@@ -48,33 +48,33 @@ int APIENTRY wWinMain(
 
     std::wstring strDllPath = GetDllPath();
 
-    OutputDebugLineW(L"ForceInterfaceInjector: Creating process %s (%s) with DLL %s", __wargv[1], strCommandLine.c_str(), strDllPath.c_str());
+    OutputDebugLineW(L"Creating process %s (%s) with DLL %s", __wargv[1], strCommandLine.c_str(), strDllPath.c_str());
 
     CreateResult result = CreateProcessWithDll(__wargv[1], strCommandLine, strDllPath);
     DWORD dwError = GetLastError();
 
     switch (result) {
     case SUCCESS:
-        OutputDebugLineW(L"ForceInterfaceInjector: - Executed");
+        OutputDebugLineW(L" - Executed");
         return 0;
     case INVALID_EXECUTABLE:
-        OutputDebugLineW(L"ForceInterfaceInjector: - Invalid executable %s", __wargv[1]);
+        OutputDebugLineW(L" - Invalid executable %s", __wargv[1]);
         return 1;
     case INVALID_DLL:
-        OutputDebugLineW(L"ForceInterfaceInjector: - Invalid DLL %s", strDllPath.c_str());
+        OutputDebugLineW(L" - Invalid DLL %s", strDllPath.c_str());
         return 1;
     case CREATE_FAILED:
-        OutputDebugLineW(L"ForceInterfaceInjector: - DetourCreateProcessWithDllEx failed, 0x%08x", dwError);
+        OutputDebugLineW(L" - DetourCreateProcessWithDllEx failed, 0x%08x", dwError);
         if (dwError == ERROR_INVALID_HANDLE) {
 #ifdef _WIN64
-            OutputDebugLineW(L"ForceInterfaceInjector: - Can't detour a 32-bit target process from a 64-bit parent process.");
+            OutputDebugLineW(L" - Can't detour a 32-bit target process from a 64-bit parent process.");
 #else
-            OutputDebugLineW(L"ForceInterfaceInjector: - Can't detour a 64-bit target process from a 32-bit parent process.");
+            OutputDebugLineW(L" - Can't detour a 64-bit target process from a 32-bit parent process.");
 #endif
         }
         return 1;
     default:
-        OutputDebugLineW(L"ForceInterfaceInjector: - Unknown error %d", (int)result);
+        OutputDebugLineW(L" - Unknown error %d", (int)result);
         return 1;
     }
 }

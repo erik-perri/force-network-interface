@@ -57,7 +57,7 @@ int WINAPI Hooked_connect(
 
     if (getsockname(s, ((struct sockaddr*) & addrInfo), &nInfoLength) == SOCKET_ERROR && WSAGetLastError() != WSAEINVAL) {
         OutputDebugLine(
-            _T("ForceInterfaceDll: Hooked_connect(%p, %p, %d): getsockname failed %d"),
+            _T("Hooked_connect(%p, %p, %d): getsockname failed %d"),
             s, name, namelen, WSAGetLastError()
         );
         return Real_connect(s, name, namelen);
@@ -71,13 +71,13 @@ int WINAPI Hooked_connect(
 
         if (Real_bind(s, (struct sockaddr*) & addrInfo, nInfoLength) == SOCKET_ERROR) {
             OutputDebugLine(
-                _T("ForceInterfaceDll: Hooked_connect(%p, %p, %d): bind failed %d"),
+                _T("Hooked_connect(%p, %p, %d): bind failed %d"),
                 s, name, namelen, WSAGetLastError()
             );
             return SOCKET_ERROR;
         }
 
-        OutputDebugLine(_T("ForceInterfaceDll: Hooked_connect(%p, %p, %d): bind success"), s, name, namelen);
+        OutputDebugLine(_T("Hooked_connect(%p, %p, %d): bind success"), s, name, namelen);
     }
 
     return Real_connect(s, name, namelen);
