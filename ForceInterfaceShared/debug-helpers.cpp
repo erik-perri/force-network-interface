@@ -4,28 +4,28 @@
 
 int __cdecl OutputDebugLineA(LPCSTR format, ...)
 {
-	CHAR szLine[2048];
+    CHAR szLine[2048];
 
-	va_list argptr;
-	va_start(argptr, format);
-	int ret = _vsnprintf_s(szLine, sizeof(szLine), format, argptr);
-	va_end(argptr);
+    va_list argptr;
+    va_start(argptr, format);
+    int ret = _vsnprintf_s(szLine, sizeof(szLine), format, argptr);
+    va_end(argptr);
 
-	OutputDebugStringA(szLine);
+    OutputDebugStringA(szLine);
 
-	return ret;
+    return ret;
 }
 
 int __cdecl OutputDebugLineW(LPCWSTR format, ...)
 {
-	WCHAR szLine[2048];
+    WCHAR szLine[2048];
 
-	va_list argptr;
-	va_start(argptr, format);
-	int ret = _vsnwprintf_s(szLine, sizeof(szLine), format, argptr);
-	va_end(argptr);
+    va_list argptr;
+    va_start(argptr, format);
+    int ret = _vsnwprintf_s(szLine, sizeof(szLine), format, argptr);
+    va_end(argptr);
 
-	OutputDebugStringW(szLine);
+    OutputDebugStringW(szLine);
 
-	return ret;
+    return ret;
 }

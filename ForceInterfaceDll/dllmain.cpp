@@ -11,24 +11,24 @@ Options g_forceOptions;
 
 BOOL APIENTRY DllMain(HMODULE hModule, DWORD  dwReasonForCall, LPVOID lpReserved)
 {
-	switch (dwReasonForCall) {
-	case DLL_PROCESS_ATTACH:
-		if (!g_forceOptions.LoadInterfaceIpFromEnv(_T("FORCE_INTERFACE"))) {
-			OutputDebugLine(_T("ForceInterfaceDll: Not attaching to %d"), GetCurrentProcessId());
-			return TRUE;
-		}
+    switch (dwReasonForCall) {
+    case DLL_PROCESS_ATTACH:
+        if (!g_forceOptions.LoadInterfaceIpFromEnv(_T("FORCE_INTERFACE"))) {
+            OutputDebugLine(_T("ForceInterfaceDll: Not attaching to %d"), GetCurrentProcessId());
+            return TRUE;
+        }
 
-		g_forceOptions.LoadDllPath(hModule);
+        g_forceOptions.LoadDllPath(hModule);
 
-		OutputDebugLine(_T("ForceInterfaceDll: Attaching to %d, binding to %s"), GetCurrentProcessId(), g_forceOptions.GetInterfaceIp());
+        OutputDebugLine(_T("ForceInterfaceDll: Attaching to %d, binding to %s"), GetCurrentProcessId(), g_forceOptions.GetInterfaceIp());
 
-		AttachDetours(g_forceOptions.GetDllPath(), g_forceOptions.GetInterfaceIp());
-		break;
-	case DLL_PROCESS_DETACH:
-		OutputDebugLine(_T("ForceInterfaceDll: Detaching from %d"), GetCurrentProcessId());
+        AttachDetours(g_forceOptions.GetDllPath(), g_forceOptions.GetInterfaceIp());
+        break;
+    case DLL_PROCESS_DETACH:
+        OutputDebugLine(_T("ForceInterfaceDll: Detaching from %d"), GetCurrentProcessId());
 
-		DetachDetours();
-		break;
-	}
-	return TRUE;
+        DetachDetours();
+        break;
+    }
+    return TRUE;
 }

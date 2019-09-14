@@ -2,7 +2,7 @@
 
 # All files
 [*]
-indent_style = tab
+indent_style = space
 end_of_line = lf
 
 # Xml files
