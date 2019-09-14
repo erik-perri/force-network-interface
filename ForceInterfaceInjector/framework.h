@@ -11,7 +11,6 @@
 #include <memory.h>
 
 // String Header Files
-#include <tchar.h>
 #include <strsafe.h>
 #include <string>
 
@@ -20,9 +19,3 @@
 #include <detours.h>
 
 #pragma comment(lib, "detours.lib")
-
-#ifdef _UNICODE
-#define String std::wstring
-#else
-#define String std::string
-#endif // !UNICODE

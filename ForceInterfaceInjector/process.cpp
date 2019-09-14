@@ -4,14 +4,14 @@
 
 #include <algorithm>
 
-BOOL IsFile(String strPath)
+BOOL IsFile(std::wstring strPath)
 {
     DWORD dwAttrib = GetFileAttributes(strPath.c_str());
 
     return dwAttrib != INVALID_FILE_ATTRIBUTES && !(dwAttrib & FILE_ATTRIBUTE_DIRECTORY);
 }
 
-BOOL EndsWith(String strCheck, String strSuffix)
+BOOL EndsWith(std::wstring strCheck, std::wstring strSuffix)
 {
     transform(strCheck.begin(), strCheck.end(), strCheck.begin(), ::tolower);
     transform(strSuffix.begin(), strSuffix.end(), strSuffix.begin(), ::tolower);
@@ -20,29 +20,25 @@ BOOL EndsWith(String strCheck, String strSuffix)
         && strCheck.compare(strCheck.size() - strSuffix.size(), strSuffix.size(), strSuffix) == 0;
 }
 
-CreateResult CreateProcessWithDll(String strExecutablePath, String strCommandLine, String strDllPath)
+CreateResult CreateProcessWithDll(std::wstring strExecutablePath, std::wstring strCommandLine, std::wstring strDllPath)
 {
-    if (!IsFile(strExecutablePath) || !EndsWith(strExecutablePath, _T(".exe"))) {
+    if (!IsFile(strExecutablePath) || !EndsWith(strExecutablePath, L".exe")) {
         return INVALID_EXECUTABLE;
     }
 
-    if (!IsFile(strDllPath) || !EndsWith(strDllPath, _T(".dll"))) {
+    if (!IsFile(strDllPath) || !EndsWith(strDllPath, L".dll")) {
         return INVALID_DLL;
     }
 
     DWORD dwDllLength = (DWORD)strDllPath.size() + 1;
     CHAR* pszDllPath = new CHAR[dwDllLength];
 
-#ifdef _UNICODE
     const int nSizeNeeded = WideCharToMultiByte(CP_UTF8, 0, &strDllPath[0], (int)strDllPath.size(), NULL, 0, NULL, NULL);
 
     std::string strConverted(nSizeNeeded, 0);
     WideCharToMultiByte(CP_UTF8, 0, &strDllPath[0], (int)strDllPath.size(), &strConverted[0], nSizeNeeded, NULL, NULL);
 
     StringCchCopyA(pszDllPath, dwDllLength, strConverted.c_str());
-#else
-    StringCchCopyA(pszDllPath, dwDllLength, strDllPath.c_str());
-#endif
 
     DWORD dwCommandLineLength = (DWORD)strCommandLine.size() + 1;
     TCHAR* pszCommandLine = NULL;
@@ -61,7 +57,7 @@ CreateResult CreateProcessWithDll(String strExecutablePath, String strCommandLin
 
     SetLastError(0);
 
-    BOOL bCreateResult = DetourCreateProcessWithDllEx(
+    BOOL bCreateResult = DetourCreateProcessWithDllExW(
         strExecutablePath.c_str(), pszCommandLine, NULL, NULL, TRUE, dwFlags, NULL, NULL, &si, &pi, pszDllPath, NULL
     );
 

@@ -8,4 +8,4 @@ enum CreateResult
     CREATE_FAILED
 };
 
-CreateResult CreateProcessWithDll(String strExecutablePath, String strCommandLine, String strDllPath);
+CreateResult CreateProcessWithDll(std::wstring strExecutablePath, std::wstring strCommandLine, std::wstring strDllPath);
