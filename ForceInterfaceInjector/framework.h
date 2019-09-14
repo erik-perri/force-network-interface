@@ -4,6 +4,7 @@
 #define WIN32_LEAN_AND_MEAN             // Exclude rarely-used stuff from Windows headers
 // Windows Header Files
 #include <windows.h>
+#include <pathcch.h>
 
 // C RunTime Header Files
 #include <stdlib.h>
@@ -18,4 +19,5 @@
 #include <debug-helpers.h>
 #include <detours.h>
 
+#pragma comment(lib, "pathcch.lib")
 #pragma comment(lib, "detours.lib")

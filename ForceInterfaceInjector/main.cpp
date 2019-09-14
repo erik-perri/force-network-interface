@@ -5,21 +5,15 @@
 std::wstring GetDllPath()
 {
     wchar_t szBuffer[MAX_PATH];
+
     GetModuleFileNameW(NULL, szBuffer, MAX_PATH);
+    PathCchRemoveExtension(szBuffer, MAX_PATH);
 
-    std::wstring strPath = szBuffer, strDll;
-
-    const size_t stLastSlash = strPath.rfind('\\');
-    if (std::wstring::npos != stLastSlash) {
-        strDll = strPath.substr(0, stLastSlash);
 #ifdef _WIN64
-        strDll.append(L"\\ForceInterfaceDll.x64.dll");
+    return std::wstring(szBuffer).append(L".x64.dll");
 #else
-        strDll.append(L"\\ForceInterfaceDll.x86.dll");
+    return std::wstring(szBuffer).append(L".x86.dll");
 #endif
-    }
-
-    return strDll;
 }
 
 int APIENTRY wWinMain(

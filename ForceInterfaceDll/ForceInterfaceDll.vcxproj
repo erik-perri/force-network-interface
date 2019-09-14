@@ -74,7 +74,7 @@
     <LinkIncremental>true</LinkIncremental>
     <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);..\Detours\include;..\ForceInterfaceShared\include</IncludePath>
     <LibraryPath>$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86);$(NETFXKitsDir)Lib\um\x86;..\Detours\lib.$(PlatformTarget)</LibraryPath>
-    <TargetName>$(ProjectName).$(PlatformTarget)</TargetName>
+    <TargetName>ForceInterface.$(PlatformTarget)</TargetName>
     <OutDir>$(SolutionDir)$(Configuration)\$(PlatformTarget)\</OutDir>
     <IntDir>$(Configuration)\$(PlatformTarget)\</IntDir>
   </PropertyGroup>
@@ -82,7 +82,7 @@
     <LinkIncremental>true</LinkIncremental>
     <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);..\Detours\include;..\ForceInterfaceShared\include</IncludePath>
     <LibraryPath>$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(NETFXKitsDir)Lib\um\x64;..\Detours\lib.$(PlatformTarget)</LibraryPath>
-    <TargetName>$(ProjectName).$(PlatformTarget)</TargetName>
+    <TargetName>ForceInterface.$(PlatformTarget)</TargetName>
     <OutDir>$(SolutionDir)$(Configuration)\$(PlatformTarget)\</OutDir>
     <IntDir>$(Configuration)\$(PlatformTarget)\</IntDir>
   </PropertyGroup>
@@ -90,7 +90,7 @@
     <LinkIncremental>false</LinkIncremental>
     <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);..\Detours\include;..\ForceInterfaceShared\include</IncludePath>
     <LibraryPath>$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86);$(NETFXKitsDir)Lib\um\x86;..\Detours\lib.$(PlatformTarget)</LibraryPath>
-    <TargetName>$(ProjectName).$(PlatformTarget)</TargetName>
+    <TargetName>ForceInterface.$(PlatformTarget)</TargetName>
     <OutDir>$(SolutionDir)$(Configuration)\$(PlatformTarget)\</OutDir>
     <IntDir>$(Configuration)\$(PlatformTarget)\</IntDir>
   </PropertyGroup>
@@ -98,7 +98,7 @@
     <LinkIncremental>false</LinkIncremental>
     <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);..\Detours\include;..\ForceInterfaceShared\include</IncludePath>
     <LibraryPath>$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(NETFXKitsDir)Lib\um\x64;..\Detours\lib.$(PlatformTarget)</LibraryPath>
-    <TargetName>$(ProjectName).$(PlatformTarget)</TargetName>
+    <TargetName>ForceInterface.$(PlatformTarget)</TargetName>
     <OutDir>$(SolutionDir)$(Configuration)\$(PlatformTarget)\</OutDir>
     <IntDir>$(Configuration)\$(PlatformTarget)\</IntDir>
   </PropertyGroup>
