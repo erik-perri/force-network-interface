@@ -15,21 +15,21 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="framework.h">
+    <ClInclude Include="include/framework.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="pch.h">
+    <ClInclude Include="include/pch.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="debug-helpers.h">
+    <ClInclude Include="include/debug-helpers.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="pch.cpp">
+    <ClCompile Include="src/pch.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="debug-helpers.cpp">
+    <ClCompile Include="src/debug-helpers.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
