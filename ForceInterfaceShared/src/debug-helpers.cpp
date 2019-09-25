@@ -56,3 +56,19 @@ int __cdecl OutputDebugLineW(LPCWSTR lpszFormat, ...)
 
     return nCharsAdded;
 }
+
+void DumpEnvironmentStrings()
+{
+    OutputDebugLine(_T("Current Environment:"));
+
+    LPTSTR pszEnvironment = GetEnvironmentStrings();
+    LPTSTR pszVariable = (LPTSTR)pszEnvironment;
+    while (*pszVariable)
+    {
+        OutputDebugLine(_T(" - %s"), pszVariable);
+
+        pszVariable += _tcslen(pszVariable) + 1;
+    }
+
+    FreeEnvironmentStrings(pszEnvironment);
+}

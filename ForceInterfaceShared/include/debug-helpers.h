@@ -8,3 +8,5 @@ int __cdecl OutputDebugLineW(LPCWSTR format, ...);
 #else
 #define OutputDebugLine OutputDebugLineA
 #endif // !UNICODE
+
+void DumpEnvironmentStrings();
