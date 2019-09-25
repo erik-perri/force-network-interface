@@ -1,20 +1,8 @@
 #include "pch.h"
 #include "framework.h"
-#include "process.h"
+#include "injector-options.h"
 
-std::wstring GetDllPath()
-{
-    wchar_t szBuffer[MAX_PATH];
-
-    GetModuleFileNameW(NULL, szBuffer, MAX_PATH);
-    PathCchRemoveExtension(szBuffer, MAX_PATH);
-
-#ifdef _WIN64
-    return std::wstring(szBuffer).append(L".x64.dll");
-#else
-    return std::wstring(szBuffer).append(L".x86.dll");
-#endif
-}
+DWORD CreateProcessWithDll(InjectorOptions options);
 
 int APIENTRY wWinMain(
     _In_ HINSTANCE hInstance,
@@ -23,58 +11,86 @@ int APIENTRY wWinMain(
     _In_ int nShowCmd
 )
 {
-    UNREFERENCED_PARAMETER(hInstance);
     UNREFERENCED_PARAMETER(hPrevInstance);
     UNREFERENCED_PARAMETER(lpCmdLine);
     UNREFERENCED_PARAMETER(nShowCmd);
 
-    if (__argc < 2) {
-        OutputDebugLineW(L"No app specified");
-        return 3;
+    InjectorOptions options;
+
+    options.LoadFromEnvironment(hInstance);
+    options.LoadFromCommandLine(__argc, __wargv);
+
+    if (options.GetDllPath() == nullptr)
+    {
+        OutputDebugLineW(L"Failed to find DLL path to inject.");
+        return 1;
     }
 
-    std::wstring strCommandLine;
-    if (__argc > 2) {
-        for (int i = 1; i < __argc; i++) {
-            if (!strCommandLine.empty()) {
-                strCommandLine.append(L" ");
-            }
-
-            strCommandLine.append(L"\"");
-            strCommandLine.append(__wargv[i]);
-            strCommandLine.append(L"\"");
-        }
+    if (options.GetInterfaceIp() == nullptr)
+    {
+        OutputDebugLineW(L"No interface IP specified.");
+        return 1;
     }
 
-    std::wstring strDllPath = GetDllPath();
+    if (options.GetProcessCommandLine() == nullptr)
+    {
+        OutputDebugLineW(L"No launch executable specified.");
+        return 1;
+    }
 
-    OutputDebugLineW(L"Creating process %s (%s) with DLL %s", __wargv[1], strCommandLine.c_str(), strDllPath.c_str());
+    OutputDebugLineW(L"Creating process");
+    OutputDebugLineW(L" - Process: %s", options.GetProcessCommandLine());
+    OutputDebugLineW(L" - DLL:     %S", options.GetDllPath());
 
-    CreateResult result = CreateProcessWithDll(__wargv[1], strCommandLine, strDllPath);
-    DWORD dwError = GetLastError();
-
-    switch (result) {
-    case SUCCESS:
-        OutputDebugLineW(L" - Executed");
+    DWORD dwCreatedId = CreateProcessWithDll(options);
+    if (dwCreatedId != 0) {
+        OutputDebugLineW(L" - Created: %d", dwCreatedId);
         return 0;
-    case INVALID_EXECUTABLE:
-        OutputDebugLineW(L" - Invalid executable %s", __wargv[1]);
-        return 1;
-    case INVALID_DLL:
-        OutputDebugLineW(L" - Invalid DLL %s", strDllPath.c_str());
-        return 1;
-    case CREATE_FAILED:
-        OutputDebugLineW(L" - DetourCreateProcessWithDllEx failed, 0x%08x", dwError);
-        if (dwError == ERROR_INVALID_HANDLE) {
-#ifdef _WIN64
-            OutputDebugLineW(L" - Can't detour a 32-bit target process from a 64-bit parent process.");
-#else
-            OutputDebugLineW(L" - Can't detour a 64-bit target process from a 32-bit parent process.");
-#endif
-        }
-        return 1;
-    default:
-        OutputDebugLineW(L" - Unknown error %d", (int)result);
-        return 1;
     }
+
+    DWORD dwLastError = GetLastError();
+
+    OutputDebugLineW(L" - Failed to create, last error: 0x%08x (%d)", dwLastError, dwLastError);
+    if (dwLastError == ERROR_INVALID_HANDLE) {
+#ifdef _WIN64
+        OutputDebugLineW(L" - Can't detour a 32-bit target process from a 64-bit parent process.");
+#else
+        OutputDebugLineW(L" - Can't detour a 64-bit target process from a 32-bit parent process.");
+#endif
+    }
+
+    return 1;
+}
+
+DWORD CreateProcessWithDll(InjectorOptions options)
+{
+    // CreateProcessW can modify the command line so it can't be const
+    size_t nCommandLineSize = wcslen(options.GetProcessCommandLine()) + 1;
+    wchar_t* pszCommandLine = new wchar_t[nCommandLineSize];
+    StringCchCopyW(pszCommandLine, nCommandLineSize, options.GetProcessCommandLine());
+
+    STARTUPINFO si;
+    PROCESS_INFORMATION pi;
+    DWORD dwFlags = CREATE_DEFAULT_ERROR_MODE;
+
+    ZeroMemory(&si, sizeof(si));
+    ZeroMemory(&pi, sizeof(pi));
+    si.cb = sizeof(si);
+
+    SetLastError(0);
+
+    SetEnvironmentVariableW(options.GetInterfaceIpEnvKey(), options.GetInterfaceIp());
+
+    BOOL bCreateResult = DetourCreateProcessWithDllExW(
+        nullptr, pszCommandLine, NULL, NULL, TRUE, dwFlags,
+        NULL, NULL, &si, &pi, options.GetDllPath(), NULL
+    );
+
+    delete[] pszCommandLine;
+
+    if (bCreateResult) {
+        return pi.dwProcessId;
+    }
+
+    return 0;
 }

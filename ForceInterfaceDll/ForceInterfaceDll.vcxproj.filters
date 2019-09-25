@@ -24,7 +24,7 @@
     <ClInclude Include="detour.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="options.h">
+    <ClInclude Include="dll-options.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -38,7 +38,7 @@
     <ClCompile Include="detour.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="options.cpp">
+    <ClCompile Include="dll-options.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

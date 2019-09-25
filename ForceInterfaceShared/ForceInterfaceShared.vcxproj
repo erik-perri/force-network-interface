@@ -167,6 +167,7 @@
     <ClInclude Include="include/framework.h" />
     <ClInclude Include="include/debug-helpers.h" />
     <ClInclude Include="include/pch.h" />
+    <ClInclude Include="include\common-options.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src/debug-helpers.cpp" />
@@ -176,6 +177,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="src\common-options.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

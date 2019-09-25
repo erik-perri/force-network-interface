@@ -7,7 +7,6 @@
 #include <ws2tcpip.h>
 
 // String Header Files
-#include <tchar.h>
 #include <strsafe.h>
 
 // Library Header Files

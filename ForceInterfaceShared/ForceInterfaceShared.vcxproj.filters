@@ -24,12 +24,18 @@
     <ClInclude Include="include/debug-helpers.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\common-options.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src/pch.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src/debug-helpers.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\common-options.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

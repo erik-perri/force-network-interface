@@ -1,4 +1,4 @@
 #pragma once
 
-void AttachDetours(LPCSTR lpDllPath, LPCTSTR lpIpAddress);
+bool AttachDetours(LPCSTR lpDllPath, LPCWSTR lpIpAddress);
 void DetachDetours();

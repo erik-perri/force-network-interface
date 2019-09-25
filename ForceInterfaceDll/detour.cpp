@@ -1,7 +1,6 @@
 #include "pch.h"
 
-BOOL g_bAttached = FALSE;
-LPCSTR g_pDllPath = NULL;
+LPCSTR g_pDllPath = nullptr;
 in_addr g_addrSocketAddr;
 
 /*
@@ -56,8 +55,8 @@ int WINAPI Hooked_connect(
     int nInfoLength = sizeof(struct sockaddr_in);
 
     if (getsockname(s, ((struct sockaddr*) & addrInfo), &nInfoLength) == SOCKET_ERROR && WSAGetLastError() != WSAEINVAL) {
-        OutputDebugLine(
-            _T("Hooked_connect(%p, %p, %d): getsockname failed %d"),
+        OutputDebugLineW(
+            L"Hooked_connect(%p, %p, %d): getsockname failed %d",
             s, name, namelen, WSAGetLastError()
         );
         return Real_connect(s, name, namelen);
@@ -70,14 +69,14 @@ int WINAPI Hooked_connect(
         addrInfo.sin_port = 0;
 
         if (Real_bind(s, (struct sockaddr*) & addrInfo, nInfoLength) == SOCKET_ERROR) {
-            OutputDebugLine(
-                _T("Hooked_connect(%p, %p, %d): bind failed %d"),
+            OutputDebugLineW(
+                L"Hooked_connect(%p, %p, %d): bind failed %d",
                 s, name, namelen, WSAGetLastError()
             );
             return SOCKET_ERROR;
         }
 
-        OutputDebugLine(_T("Hooked_connect(%p, %p, %d): bind success"), s, name, namelen);
+        OutputDebugLineW(L"Hooked_connect(%p, %p, %d): bind success", s, name, namelen);
     }
 
     return Real_connect(s, name, namelen);
@@ -113,7 +112,7 @@ BOOL WINAPI Hooked_CreateProcessA(
     LPPROCESS_INFORMATION lpProcessInformation
 )
 {
-    if (g_pDllPath != NULL) {
+    if (g_pDllPath != nullptr) {
         return DetourCreateProcessWithDllExA(
             lpApplicationName, lpCommandLine, lpProcessAttributes, lpThreadAttributes, bInheritHandles,
             dwCreationFlags, lpEnvironment, lpCurrentDirectory, lpStartupInfo, lpProcessInformation,
@@ -157,7 +156,7 @@ BOOL WINAPI Hooked_CreateProcessW(
     LPPROCESS_INFORMATION lpProcessInformation
 )
 {
-    if (g_pDllPath != NULL) {
+    if (g_pDllPath != nullptr) {
         return DetourCreateProcessWithDllExW(
             lpApplicationName, lpCommandLine, lpProcessAttributes, lpThreadAttributes, bInheritHandles,
             dwCreationFlags, lpEnvironment, lpCurrentDirectory, lpStartupInfo, lpProcessInformation,
@@ -171,14 +170,14 @@ BOOL WINAPI Hooked_CreateProcessW(
     );
 }
 
-void AttachDetours(LPCSTR lpDllPath, LPCTSTR lpIpAddress)
+bool AttachDetours(LPCSTR pszDllPath, LPCWSTR pszIpAddress)
 {
-    g_pDllPath = lpDllPath;
+    g_pDllPath = pszDllPath;
     g_addrSocketAddr = {};
 
-    if (InetPton(AF_INET, lpIpAddress, &g_addrSocketAddr) < 1) {
+    if (InetPton(AF_INET, pszIpAddress, &g_addrSocketAddr) < 1) {
         g_addrSocketAddr = {};
-        return;
+        return false;
     }
 
     DetourRestoreAfterWith();
@@ -193,16 +192,15 @@ void AttachDetours(LPCSTR lpDllPath, LPCTSTR lpIpAddress)
 
     DetourTransactionCommit();
 
-    g_bAttached = TRUE;
+    return true;
 }
 
 void DetachDetours()
 {
-    if (g_bAttached == FALSE) {
+    if (g_pDllPath == nullptr) {
         return;
     }
 
-    g_pDllPath = NULL;
     g_addrSocketAddr = {};
 
     DetourTransactionBegin();

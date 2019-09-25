@@ -15,6 +15,8 @@
 #include <strsafe.h>
 #include <string>
 
+#include <memory>
+
 // Library Header Files
 #include <debug-helpers.h>
 #include <detours.h>

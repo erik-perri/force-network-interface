@@ -1,33 +1,44 @@
 #include "pch.h"
-#include "options.h"
 #include "detour.h"
+#include "dll-options.h"
 
 // Detours requires an export in the DLL to inject properly
 void __declspec(dllexport) Unused()
 {
 }
 
-Options g_forceOptions;
+DllOptions options;
+bool attached = false;
 
-BOOL APIENTRY DllMain(HMODULE hModule, DWORD  dwReasonForCall, LPVOID lpReserved)
+BOOL APIENTRY DllMain(HMODULE hModule, DWORD dwReasonForCall, LPVOID lpReserved)
 {
+    UNREFERENCED_PARAMETER(lpReserved);
+
     switch (dwReasonForCall) {
     case DLL_PROCESS_ATTACH:
-        if (!g_forceOptions.LoadInterfaceIpFromEnv(_T("FORCE_INTERFACE"))) {
-            OutputDebugLine(_T("Not attaching to %d"), GetCurrentProcessId());
-            return TRUE;
+        OutputDebugLineW(L"Attaching DLL to %p (%d)", hModule, GetCurrentProcessId());
+
+        options.LoadFromEnvironment(hModule);
+
+        if (options.GetDllPath() != nullptr && options.GetInterfaceIp() != nullptr) {
+            attached = AttachDetours(options.GetDllPath(), options.GetInterfaceIp());
+            if (!attached) {
+                OutputDebugLineW(L" - Failed to attach detours");
+            }
+        }
+        else {
+            attached = false;
+            OutputDebugLineW(L" - Unable to attach, missing options");
         }
 
-        g_forceOptions.LoadDllPath(hModule);
-
-        OutputDebugLine(_T("Attaching to %d, binding to %s"), GetCurrentProcessId(), g_forceOptions.GetInterfaceIp());
-
-        AttachDetours(g_forceOptions.GetDllPath(), g_forceOptions.GetInterfaceIp());
         break;
     case DLL_PROCESS_DETACH:
-        OutputDebugLine(_T("Detaching from %d"), GetCurrentProcessId());
+        OutputDebugLineW(L"Detaching DLL from %p (%d)", hModule, GetCurrentProcessId());
 
-        DetachDetours();
+        if (attached) {
+            DetachDetours();
+        }
+
         break;
     }
     return TRUE;
