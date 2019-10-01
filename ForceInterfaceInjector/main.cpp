@@ -39,8 +39,9 @@ int APIENTRY wWinMain(
     }
 
     OutputDebugLineW(L"Creating process");
-    OutputDebugLineW(L" - Process: %s", options.GetProcessCommandLine());
-    OutputDebugLineW(L" - DLL:     %S", options.GetDllPath());
+    OutputDebugLineW(L" - Process:   \"%s\"", options.GetProcessCommandLine());
+    OutputDebugLineW(L" - DLL:       \"%S\"", options.GetDllPath());
+    OutputDebugLineW(L" - Interface: \"%s\"", options.GetInterfaceIp());
 
     DWORD dwCreatedId = CreateProcessWithDll(options);
     if (dwCreatedId != 0) {
