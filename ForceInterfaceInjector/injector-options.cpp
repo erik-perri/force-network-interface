@@ -18,9 +18,14 @@ void InjectorOptions::LoadFromCommandLine(int argc, wchar_t* argv[])
                 this->strCommandLine.append(L" ");
             }
 
-            this->strCommandLine.append(L"\"");
-            this->strCommandLine.append(__wargv[i]);
-            this->strCommandLine.append(L"\"");
+            if (wcsstr(__wargv[i], L" ") != nullptr) {
+                this->strCommandLine.append(L"\"");
+                this->strCommandLine.append(__wargv[i]);
+                this->strCommandLine.append(L"\"");
+            }
+            else {
+                this->strCommandLine.append(__wargv[i]);
+            }
         }
     }
 
